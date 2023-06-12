@@ -6,41 +6,29 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        Customer cus1 = new Customer("Chup", "Vu", "chup@mail.com", "address");
-        // Console.WriteLine(cus1.FirstName);
-        // cus1.FirstName= "";
-        // Console.WriteLine(cus1.FirstName);
-        // cus1.Email = "chupgmail.com";
-        // Console.WriteLine(cus1.Email);
-        Customer cus2 = new Customer("Bim", "Vu", "bim@mail.com", "address");
-        Customer cus3 = new Customer("Bo", "Kim", "bo@mail.com", "address");
-        Customer cus4 = new Customer("Hi", "Ha", "hi@mail.com", "address");
+        Console.WriteLine("Create 4 example customers, a database then add 4 customers into database");
+        Customer cus1 = new Customer("Anna", "Andre", "anna@mail.com", "Anna address");
+        Customer cus2 = new Customer("Billy", "Bronya", "billy@mail.com", "Billy address");
+        Customer cus3 = new Customer("Chris", "Christine", "chris@mail.com", "Chris address");
+        Customer cus4 = new Customer("Dyanne", "Doe", "dyanne@mail.com", "Dyanne address");
         CustomerDatabase database = new CustomerDatabase();
-        // database.Undo();
-        // database.Redo();
         database.AddCustomer(cus1);
         database.AddCustomer(cus2);
         database.AddCustomer(cus3);
-        // var data = database.Customers;
-        // foreach (var item in data)
-        // {
-        //     Console.WriteLine(item);
-        // }
-        // Console.WriteLine(database.GetCustomer(4));
-        database.UpdateCustomer(cus1, "Chub", "Vu", "chub@mail.com", "addressss");
+        database.AddCustomer(cus4);
         Console.WriteLine(database);
-        database.DeleteCustomer(cus1);
+        Console.WriteLine("Database after updating information of 2 customers and delete 1 customer");
+        database.UpdateCustomer(cus1, "Anna", "Allan", "allan@mail.com", "Anna address");
+        database.UpdateCustomer(cus2, "Billy", "Bill", "billybill@mail.com", "Billy address");
+        database.DeleteCustomer(cus3);
         Console.WriteLine(database);
+        Console.WriteLine("Undo deleting customer");
         database.Undo();
         Console.WriteLine(database);
+        Console.WriteLine("Then redo the latest action - deleting customer");
         database.Redo();
         Console.WriteLine(database);
-        // var data = database.Customers;
-        // foreach (var item in data)
-        // {
-        //     Console.WriteLine(item);
-        // }
-        // Console.WriteLine(database);
-        // Console.WriteLine(database.SearchById(2));
+        Console.WriteLine("Search customer by id: 2");
+        Console.WriteLine(database.SearchById(2));
     }
 }

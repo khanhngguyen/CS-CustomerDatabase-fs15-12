@@ -1,5 +1,6 @@
 using System;
 using Features;
+using Helper;
 
 class CustomerDatabase
 {
@@ -22,6 +23,7 @@ class CustomerDatabase
         if (_emails.Contains(customer.Email))
         {
             throw new Exception("Email already existed");
+            // throw ExceptionHandler.EmailException();
         }
         else 
         {
@@ -33,6 +35,7 @@ class CustomerDatabase
             _emails.Add(customer.Email);
             _ids.Add(id);
 
+            //undo stack
             var undoAction = ("delete", customer);
             _undo.Push(undoAction);
             // _undo.Push(delegate()
@@ -40,6 +43,9 @@ class CustomerDatabase
             //     this.DeleteCustomer(customer);
             // });
             _redo.Clear();
+
+            //filehelper
+            FileHelper.AddCustomer(customer.ToString());
             return true;
         }
     }
@@ -77,6 +83,7 @@ class CustomerDatabase
             _customers.Remove(customer.Id);
             _ids.Remove(customer.Id);
 
+            //undo stack
             var undoAction = ("add", customer);
             _undo.Push(undoAction);
 
@@ -87,6 +94,9 @@ class CustomerDatabase
             //     _ids.Add(customer.Id);
             // });
             _redo.Clear();
+
+            //filehelper
+            // FileHelper.DeleteCustomer(customer.ToString());
         }
     }
     public Customer SearchById(int number)
@@ -100,10 +110,10 @@ class CustomerDatabase
     }
     public override string ToString()
     {
-        string text = "Database:\n";
+        string text = "Database:";
         foreach (var item in _customers)
         {
-            text = text + item + "\n";
+            text = text + "\n" + item;
         }
         return text;
     }

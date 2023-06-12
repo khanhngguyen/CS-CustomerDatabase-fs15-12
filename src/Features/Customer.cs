@@ -82,6 +82,6 @@ class Customer
 
     public override string ToString()
     {
-        return $"Customer info, id: {this.Id}, first name: {this.FirstName}, last name: {this.LastName}, email: {this.Email}, address: {this.Address}";
+        return $"Customer info: first name: {this.FirstName}, last name: {this.LastName}, email: {this.Email}, address: {this.Address}";
     }
 }

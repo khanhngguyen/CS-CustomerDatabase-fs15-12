@@ -13,3 +13,9 @@ Information of all the customers should be stored in a file called `customers.cs
     - Implement an undo and redo feature which allows users to undo their last action or redo an action that they have undone
 3. Create `FileHelper` class: This class should contain methods for reading and writing customer information to and from the file system.
 4. Create `ExceptionHandler` class: This class should contain methods for handling exceptions that may occur during the execution of the application.
+
+## Demo photos
+Database demo in console
+![database demo in console](src/demo%20photos/console%20demo.png)
+Adding new line in customers.csv file
+![add new line in csv file](src/demo%20photos/add%20new%20line%20in%20csv%20file.png)
