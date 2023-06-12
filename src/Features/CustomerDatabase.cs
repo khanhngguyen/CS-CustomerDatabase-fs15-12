@@ -6,8 +6,10 @@ class CustomerDatabase
     //collection of customers
     //adding, reading, updating, deleting
     private IDictionary<int, Customer> _customers = new Dictionary<int, Customer>();
-    private HashSet<int> _ids = new HashSet<int>();
     private HashSet<string> _emails = new HashSet<string>();
+    private HashSet<int> _ids = new HashSet<int>();
+    private Stack<Action> _undo = new Stack<Action>();
+    private Stack<Action> _redo = new Stack<Action>();
 
     public IDictionary<int, Customer> Customers
     {
@@ -28,6 +30,13 @@ class CustomerDatabase
             customer.Id = id;
             _customers.Add(id, customer);
             _emails.Add(customer.Email);
+            _ids.Add(id);
+
+            _undo.Push(delegate()
+            {
+                this.DeleteCustomer(customer);
+            });
+            _redo.Clear();
             return true;
         }
     }
@@ -48,6 +57,8 @@ class CustomerDatabase
         {
             Customer newCustomer = new Customer(firstName, lastName, email, address);
             _customers[customer.Id] = newCustomer;
+            _emails.Remove(customer.Email);
+            _emails.Add(email);
         }
     }
     public void DeleteCustomer(Customer customer)
@@ -59,7 +70,17 @@ class CustomerDatabase
         }
         else 
         {
+            _emails.Remove(customer.Email);
             _customers.Remove(customer.Id);
+            _ids.Remove(customer.Id);
+            
+            _undo.Push(delegate()
+            {
+                _customers.Add(customer.Id, customer);
+                _emails.Add(customer.Email);
+                _ids.Add(customer.Id);
+            });
+            _redo.Clear();
         }
     }
     public Customer SearchById(int number)
@@ -79,5 +100,14 @@ class CustomerDatabase
             text = text + item + "\n";
         }
         return text;
+    }
+    public void Undo()
+    {
+        if (_undo.Count() > 0)
+        {
+            Action undoAction = _undo.Pop();
+            undoAction();
+        }
+        else throw new Exception("No actions to undo");
     }
 }
