@@ -8,8 +8,9 @@ class CustomerDatabase
     private IDictionary<int, Customer> _customers = new Dictionary<int, Customer>();
     private HashSet<string> _emails = new HashSet<string>();
     private HashSet<int> _ids = new HashSet<int>();
-    private Stack<Action> _undo = new Stack<Action>();
-    private Stack<Action> _redo = new Stack<Action>();
+    private Stack<(string type, Customer customer)> _undo = new Stack<(string type, Customer customer)>();
+    private Stack<(string type, Customer customer)> _redo = new Stack<(string type, Customer customer)>();
+    // private Stack<Action> _redo = new Stack<Action>();
 
     public IDictionary<int, Customer> Customers
     {
@@ -32,10 +33,12 @@ class CustomerDatabase
             _emails.Add(customer.Email);
             _ids.Add(id);
 
-            _undo.Push(delegate()
-            {
-                this.DeleteCustomer(customer);
-            });
+            var undoAction = ("delete", customer);
+            _undo.Push(undoAction);
+            // _undo.Push(delegate()
+            // {
+            //     this.DeleteCustomer(customer);
+            // });
             _redo.Clear();
             return true;
         }
@@ -73,13 +76,16 @@ class CustomerDatabase
             _emails.Remove(customer.Email);
             _customers.Remove(customer.Id);
             _ids.Remove(customer.Id);
-            
-            _undo.Push(delegate()
-            {
-                _customers.Add(customer.Id, customer);
-                _emails.Add(customer.Email);
-                _ids.Add(customer.Id);
-            });
+
+            var undoAction = ("add", customer);
+            _undo.Push(undoAction);
+
+            // _undo.Push(delegate()
+            // {
+            //     _customers.Add(customer.Id, customer);
+            //     _emails.Add(customer.Email);
+            //     _ids.Add(customer.Id);
+            // });
             _redo.Clear();
         }
     }
@@ -103,11 +109,48 @@ class CustomerDatabase
     }
     public void Undo()
     {
-        if (_undo.Count() > 0)
+        if (_undo.Count <= 0) throw new Exception("No actions to undo");
+        else
         {
-            Action undoAction = _undo.Pop();
-            undoAction();
+            // Action undoAction = _undo.Pop();
+            // undoAction();
+            var undoAction = _undo.Pop();
+            switch(undoAction.type)
+            {
+                case "delete":
+                    this.DeleteCustomer(undoAction.customer);
+                    //if undo is delete --> redo is add
+                    var redoAddAction = ("add", undoAction.customer);
+                    _redo.Push(redoAddAction);
+                    break;
+                case "add":
+                    _customers.Add(undoAction.customer.Id, undoAction.customer);
+                    _emails.Add(undoAction.customer.Email);
+                    _ids.Add(undoAction.customer.Id);
+                    //if undo is add --> redo is delete
+                    var redoDeleteAction = ("delete", undoAction.customer);
+                    _redo.Push(redoDeleteAction);
+                    break;
+            }
         }
-        else throw new Exception("No actions to undo");
+    }
+    public void Redo()
+    {
+        if (_redo.Count <= 0) throw new Exception("No actions to redo");
+        else
+        {
+            var redoAction = _redo.Pop();
+            switch(redoAction.type)
+            {
+                case "add":
+                    _customers.Add(redoAction.customer.Id, redoAction.customer);
+                    _emails.Add(redoAction.customer.Email);
+                    _ids.Add(redoAction.customer.Id);
+                    break;
+                case "delete":
+                    this.DeleteCustomer(redoAction.customer);
+                    break;
+            }
+        }
     }
 }
