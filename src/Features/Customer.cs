@@ -1,5 +1,6 @@
 namespace Features;
 using System.Net.Mail;
+using Helper;
 
 class Customer
 {
@@ -19,7 +20,7 @@ class Customer
         get { return _firstName; }
         set 
         {
-            if (String.IsNullOrEmpty(value)) throw new Exception("Name can not be empty");
+            if (String.IsNullOrEmpty(value)) throw ExceptionHandler.InvalidNameException();
             else _firstName = value;
         }
     }
@@ -28,7 +29,7 @@ class Customer
         get { return _lastName; }
         set
         {
-            if (String.IsNullOrEmpty(value)) throw new Exception("Name can not be empty");
+            if (String.IsNullOrEmpty(value)) throw ExceptionHandler.InvalidNameException();
             else _lastName = value;
         }
     }

@@ -22,8 +22,9 @@ class CustomerDatabase
     {
         if (_emails.Contains(customer.Email))
         {
-            throw new Exception("Email already existed");
-            // throw ExceptionHandler.EmailException();
+            // throw new Exception("Email already existed");
+            // return false;
+            throw ExceptionHandler.EmailException();
         }
         else 
         {
